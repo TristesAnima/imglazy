@@ -1,0 +1,17 @@
+之前我们实现图片懒加载的方式，
+为每个img标签增加一个自定义属性data-src，将真实图片链接放在data-src,
+为窗口监听一个滚动事件，获取每张图片的元素，进行foreach遍历，得到每张图片距离 视口上方 的距离，
+如果图片距离 浏览器顶部的距离（image.getBoundingClientRect().top） < window的高度（window.innerHeight），
+那么此时我们可以认为图片进入了用户视角，即可进行加载，此时我们将图片data-src属性的值赋值给src 即可进行“懒加载”。如下图
+
+
+
+通过监听scroll的方式很容易导致性能问题，或者多多少少会有些性能损失，
+这时我们用到 IntersectionObserver() 构造函数 const observer = new IntersectionObserver(callback)
+使用 foreach 对每个 img 元素进行审查，在每次循环的的时候,使用observer实例的 observer 方法,来观察每一个 img 节点observer.observe(image)
+此时的 callback 回调 会传一个参数 类型为数组，传的参数即为每个图片节点，其中每个图片节点会有一个isIntersecting属性，当isIntersecting为true时，证明图片进入用户可视区域，即可进行加载图片
+再次进行foreach遍历，对其进行判断是否进入了用户视图
+最后使用 unobserve() 方法命令IntersectionObserver停止对一个元素的观察 observer.unobserve(image)。
+
+IntersectionObserver官方文档：
+https://developer.mozilla.org/zh-CN/docs/Web/API/IntersectionObserver/unobserve
